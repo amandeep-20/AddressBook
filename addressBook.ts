@@ -18,10 +18,8 @@ class AddressBook {
     this.contacts = [];
   }
 
-  // Add one or more contacts
   addContacts(): void {
     console.log("\nAdd Multiple Contacts:");
-
     while (true) {
       console.log("\nEnter Contact Details:");
       const firstName = readline.question("First Name: ");
@@ -47,7 +45,6 @@ class AddressBook {
       this.contacts.push(contact);
       console.log("Contact added successfully!");
 
-      // Ask if the user wants to add another contact
       const addAnother = readline
         .question("Do you want to add another contact? (yes/no): ")
         .toLowerCase();
@@ -55,7 +52,6 @@ class AddressBook {
     }
   }
 
-  // Display all contacts
   displayContacts(): void {
     if (this.contacts.length === 0) {
       console.log("No contacts available.");
@@ -69,7 +65,6 @@ class AddressBook {
     }
   }
 
-  // Edit an existing contact
   editContact(): void {
     const nameToSearch = readline.question(
       "\nEnter the first name of the contact you want to edit: "
@@ -111,7 +106,6 @@ class AddressBook {
     }
   }
 
-  // Delete a contact using the filter method
   deleteContact(): void {
     const nameToDelete = readline.question(
       "\nEnter the first name of the contact you want to delete: "
@@ -129,35 +123,100 @@ class AddressBook {
       console.log("Contact not found.");
     }
   }
+}
 
-  // Menu-driven interface
-  menu(): void {
+class AddressBookSystem {
+  private addressBooks: Map<string, AddressBook>;
+
+  constructor() {
+    this.addressBooks = new Map();
+  }
+
+  manageAddressBook(): void {
+    while (true) {
+      console.log("\nAddress Book System Menu:");
+      console.log("1. Create Address Book");
+      console.log("2. Select Address Book");
+      console.log("3. Display Address Books");
+      console.log("4. Exit");
+
+      const choice: string = readline.question("Enter your choice: ");
+
+      switch (choice) {
+        case "1":
+          this.createAddressBook();
+          break;
+        case "2":
+          this.selectAddressBook();
+          break;
+        case "3":
+          this.displayAddressBooks();
+          break;
+        case "4":
+          console.log("Exiting Address Book System. Goodbye!");
+          process.exit(0);
+        default:
+          console.log("Invalid choice. Please try again.");
+      }
+    }
+  }
+
+  private createAddressBook(): void {
+    const name = readline.question("Enter a unique name for the address book: ");
+    if (this.addressBooks.has(name)) {
+      console.log("Address book with this name already exists.");
+    } else {
+      this.addressBooks.set(name, new AddressBook());
+      console.log(`Address book "${name}" created successfully.`);
+    }
+  }
+
+  private selectAddressBook(): void {
+    const name = readline.question("Enter the name of the address book: ");
+    const addressBook = this.addressBooks.get(name);
+    if (addressBook) {
+      console.log(`Managing Address Book: "${name}"`);
+      this.manageSpecificAddressBook(addressBook);
+    } else {
+      console.log("Address book not found.");
+    }
+  }
+
+  private displayAddressBooks(): void {
+    if (this.addressBooks.size === 0) {
+      console.log("No address books available.");
+    } else {
+      console.log("\nAvailable Address Books:");
+      this.addressBooks.forEach((_, name) => console.log(`- ${name}`));
+    }
+  }
+
+  private manageSpecificAddressBook(addressBook: AddressBook): void {
     while (true) {
       console.log("\nAddress Book Menu:");
       console.log("1. Add Contacts");
       console.log("2. Display Contacts");
       console.log("3. Edit Contact");
       console.log("4. Delete Contact");
-      console.log("5. Exit");
+      console.log("5. Back to Main Menu");
 
       const choice: string = readline.question("Enter your choice: ");
 
       switch (choice) {
         case "1":
-          this.addContacts();
+          addressBook.addContacts();
           break;
         case "2":
-          this.displayContacts();
+          addressBook.displayContacts();
           break;
         case "3":
-          this.editContact();
+          addressBook.editContact();
           break;
         case "4":
-          this.deleteContact();
+          addressBook.deleteContact();
           break;
         case "5":
-          console.log("Exiting Address Book. Goodbye!");
-          process.exit(0);
+          return;
         default:
           console.log("Invalid choice. Please try again.");
       }
@@ -165,5 +224,5 @@ class AddressBook {
   }
 }
 
-const addressBook = new AddressBook();
-addressBook.menu();
+const addressBookSystem = new AddressBookSystem();
+addressBookSystem.manageAddressBook();
