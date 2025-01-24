@@ -20,17 +20,31 @@ class AddressBook {
 
   addContacts(): void {
     console.log("\nAdd Multiple Contacts:");
+  
     while (true) {
       console.log("\nEnter Contact Details:");
       const firstName = readline.question("First Name: ");
       const lastName = readline.question("Last Name: ");
+  
+      // Check for duplicates
+      const duplicate = this.contacts.some(
+        (contact) =>
+          contact.firstName.toLowerCase() === firstName.toLowerCase() &&
+          contact.lastName.toLowerCase() === lastName.toLowerCase()
+      );
+  
+      if (duplicate) {
+        console.log("A contact with the same name already exists. Please try again.");
+        continue;
+      }
+  
       const address = readline.question("Address: ");
       const city = readline.question("City: ");
       const state = readline.question("State: ");
       const zip = readline.question("ZIP Code: ");
       const phoneNumber = readline.question("Phone Number (10 digits): ");
       const email = readline.question("Email: ");
-
+  
       const contact: Contact = {
         firstName,
         lastName,
@@ -41,16 +55,16 @@ class AddressBook {
         phoneNumber,
         email,
       };
-
+  
       this.contacts.push(contact);
       console.log("Contact added successfully!");
-
+  
       const addAnother = readline
         .question("Do you want to add another contact? (yes/no): ")
         .toLowerCase();
       if (addAnother !== "yes") break;
     }
-  }
+  }  
 
   displayContacts(): void {
     if (this.contacts.length === 0) {
@@ -73,7 +87,7 @@ class AddressBook {
       (c) => c.firstName.toLowerCase() === nameToSearch.toLowerCase()
     );
 
-    if (contact) {
+    if (contact) { 
       console.log("\nEditing Contact:");
       contact.firstName = readline.question(
         `First Name (${contact.firstName}): `
